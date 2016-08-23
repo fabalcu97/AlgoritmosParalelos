@@ -3,7 +3,7 @@
 #include <time.h>
 
 using namespace std;
-#define MAX 3
+#define MAX 16
 
 int main() {
 
