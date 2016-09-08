@@ -1,4 +1,4 @@
-GCC = mpicc
+GCC = mpic++
 FLAGS = -std=c++11 -o main.o
 
 ej3-5:
