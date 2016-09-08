@@ -23,7 +23,9 @@ int main(int argc, char* argv[]) {
 
 	if( my_rank != 0 ){
 		MPI_Recv(&tmp, 1, MPI_INT, MASTER, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		for (int i = 0; i < MAX; ++i)cout<<tmp[i]<<endl;
+		for (int i = 0; i < MAX; ++i){
+			cout<<tmp[i]<<endl;
+		}
 		for (int i = 0; i < MAX; ++i) {
 			MPI_Recv(&tmp1, 1, MPI_INT, MASTER, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			for(int j = 0; j < MAX; ++j){
