@@ -137,9 +137,9 @@ int Mutex_Insert(int value, struct list_node_s** head_pp ){
 			pthread_mutex_unlock(&head_p_mutex);
 		}
 		else{
-			pthread_mutex_lock(&(temp_p->mutex));
+			pthread_mutex_lock(&(pred_p->mutex));
 			pred_p->next = temp_p;
-			pthread_mutex_unlock(&(temp_p->mutex));
+			pthread_mutex_unlock(&(pred_p->mutex));
 		}
 		return 1;
 	}
