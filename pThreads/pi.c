@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pthread.h>
-#include "timer.h"
+#include <timer.h>
 
 const int MAX_THREADS = 1024;
 
