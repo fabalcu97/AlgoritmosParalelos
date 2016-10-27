@@ -22,7 +22,7 @@ __host__
 int main(void)
 {
   int N = 60;
-  float *x, *d_x;
+  float *x, *y, *d_x, *d_y;
 
   x = (float*)malloc(N*N*N*sizeof(float));
 
