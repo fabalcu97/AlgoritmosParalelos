@@ -6,43 +6,51 @@ using namespace std;
 #define GRID_SIZE 1
 
 __global__
-void GScale(float* img, int iRow, int iCol, int id){
+void GScale(float* img, float* res, int iRow, int iCol, int id){
 
 	int col = blockIdx.x*blockDim.x + threadIdx.x;
 	int row = blockIdx.y*blockDim.y + threadIdx.y;
 	int a = blockIdx.z*blockDim.z + threadIdx.z;
 
-	if (col < iCol && row < iRow && a < id){
+	if (col < iCol && row < iRow && a<id){
 
-		img[row*iCol+col+a*iRow*iCol]=2*img[row*iCol+col+a*iRow*iCol];
+		res[row*iCol+col+a*iCol*iRow]=2.0*img[row*iCol+col+a*iCol*iRow];
 	}
 }
 
 __host__
 int main(void)
 {
-  int N = 60;
+  int N = 6;
   float *x, *y, *d_x, *d_y;
 
   x = (float*)malloc(N*N*N*sizeof(float));
+  y = (float*)malloc(N*N*N*sizeof(float));
 
-  cudaMalloc(&d_x, N*N*N*sizeof(float));
+  cudaMalloc((void**)&d_x, N*N*N*sizeof(float));
+  cudaMalloc((void**)&d_y, N*N*N*sizeof(float));
 
   for (int i = 0; i < N*N*N; i++) {
-    x[i] = 1.0f;
+    x[i] = 5.0;
+	//y[i] = 0.0;
   }
 
 	dim3 dimBlock(16,16,16);
 	dim3 dimGrid((N-1)/16+1, (N-1)/16+1, (N-1)/16+1);
+	//dim3 dimGrid(1, 1, 1);
+
 
   cudaMemcpy(d_x, x, N*N*N*sizeof(float), cudaMemcpyHostToDevice);
 
-  GScale<<<dimGrid, dimBlock>>>(&d_x, N, N, N);
+  GScale<<<dimBlock, dimGrid>>>(d_x, d_y, N, N, N);
 
-  cudaMemcpy(x, d_x, N*N*N*sizeof(float), cudaMemcpyDeviceToHost);
+  cudaMemcpy(y, d_y, N*N*N*sizeof(float), cudaMemcpyDeviceToHost);
 
   	for (int i = 0; i < N*N*N; i++){
-		printf("%f - ", x[i]);
+		printf("%f - ", y[i]);
 	}
+
+	cudaFree(d_x);
+	cudaFree(d_y);
 
 }
