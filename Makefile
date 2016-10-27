@@ -1,34 +1,31 @@
-MPIC++ = mpic++
-G++ = g++
-GCC = gcc
-CFLAGS = -o main.o -pthread
-CXXFLAGS = -std=c++11 -o main.o -pthread
+#####Variables######
 
-ej3-5:
-	$(GCC) $(FLAGS) Ej3-5.cpp
-	mpiexec -n 4 main.o 200
+# Compilador
+AVRCC = avr-gcc
+AVRCXX = avr-g++
 
-GlobSum:
-	$(G++) $(CXXFLAGS) $(THRD) pThreads/global_sum.cpp
-	./main.o 4 50
+#Opciones de compilación
+#Modifica las opciones en base a tus necesidades. Investiga lo que necesitas
+AVRFLAGS = -std=gnu99 -o target.hex
 
-pmxv:
-	$(GCC) $(CFLAGS) pThreads/MxV/main.c
-	@echo "8000000x8"
-	@./main.o 1 8000000 8
-	@./main.o 2 8000000 8
-	@./main.o 4 8000000 8
-	@./main.o 8 8000000 8
-	@echo "8000x8000"
-	@./main.o 1 8000 8000
-	@./main.o 2 8000 8000
-	@./main.o 4 8000 8000
-	@./main.o 8 8000 8000
-	@echo "8x8000000"
-	@./main.o 1 8 8000000
-	@./main.o 2 8 8000000
-	@./main.o 4 8 8000000
-	@./main.o 8 8 8000000
+#Opciones de subida
+#Averigua las opciones de el arduino que estás usando y cámbialo de acuerdo a tus necesidades
 
-clean:
-	rm *.o
+mcu = atmega8
+f_cpu = 16000000
+format = ihex
+rate = 19200
+port = /dev/ttyusb0
+programmer = stk500
+target_file = target.hex
+
+#Llamada -> make arduino
+#Cada línea dentro de la llamada, con la respectiva identación, se ejecuta en el shell de linux como una instrucción. Con '@' la instrucción no se muestra en el shell, sólo se ejecuta.
+
+arduino:
+	#Se concatenan las variables con el archivo a compilar
+	# $(AVRCC) o $(AVRCXX) y el archivo *.c o *.cpp o *.ino
+	$(AVRCC) $(AVRFLAGS) archivo
+	
+	#Se concatena para subir el compilado al arduino
+	avrdude -F -p $mcu -P $port -c $programmer -b $rate -U flash:w:$target_file
