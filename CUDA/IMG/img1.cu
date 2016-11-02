@@ -14,7 +14,7 @@ int main(){
 	//checkCudaErrors(cudaFree(0));
 
 	Mat image;
-	image = imread("input.bmp",CV_LOAD_IMAGE_COLOR);
+	image = imread("via.png",CV_LOAD_IMAGE_COLOR);
 
 	namedWindow( "Display window", WINDOW_AUTOSIZE );
 	imshow( "Display window", image );
@@ -36,14 +36,19 @@ int main(){
 	return 0;
 }
 
-__global__ void kernel(unsigned char* d_in, unsigned char* d_out){
-    int idx = blockIdx.x;
-	int idy = threadIdx.x;
+__global__ void kernel(unsigned char* d_in, unsigned char* d_out, int w, int h){
 
-	int gray_adr = idx*50 + idy;    // calculating address for writing grayscale value
-	int clr_adr = 3*gray_adr;       // calculating address for reading RGB values
+    //int idx = blockIdx.x;
+	//int idy = threadIdx.x;
 
-	if(gray_adr<(60*50))
+	int col = blockIdx.x*blockDim.x + threadIdx.x;
+	int row = blockIdx.y*blockDim.y + threadIdx.y;
+
+	//int gray_adr = idx*w + idy;
+	int gray_adr =row*w+col;
+	int clr_adr = 3*gray_adr;
+
+	if(gray_adr<(w*h))
 		{
 			double gray_val = 0.21f*d_in[clr_adr] + 0.71f*d_in[clr_adr+1] + 0.07f*d_in[clr_adr+2];
 			d_out[gray_adr] = (unsigned char)gray_val;
@@ -60,8 +65,12 @@ extern "C" void gray_parallel(unsigned char* h_in, unsigned char* h_out, int ele
 	cudaMalloc((void**) &d_in, elems);
 	cudaMalloc((void**) &d_out, rows*cols);
 
+	dim3 dimBlock(96, 96, 1);
+	dim3 dimGrid((cols-1)/96+1, (rows-1)/96+1, 1);
+
 	cudaMemcpy(d_in, h_in, elems*sizeof(unsigned char), cudaMemcpyHostToDevice);
-    kernel<<<rows,cols>>>(d_in, d_out);
+    //kernel<<<rows,cols>>>(d_in, d_out, cols, rows);
+	kernel<<<dimBlock, dimGrid>>>(d_in, d_out, cols, rows);
 
 	cudaError_t errSync  = cudaGetLastError();
 	if (errSync != cudaSuccess)
