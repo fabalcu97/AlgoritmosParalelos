@@ -4,11 +4,11 @@ NVCCFLAGS = -std=c++11 -o a.out
 
 arraysort:
 	$(NVCC) $(NVCCFLAGS) GPU-ArraySort.cu
-	for run in {1..15}; do sudo ./a.out ; done
+	sudo ./a.out
 
 sta:
-	@$(NVCC) $(NVCCFLAGS) STA.cu
-	@sudo ./a.out 50000 2000
+	$(NVCC) $(NVCCFLAGS) STA.cu
+	sudo ./a.out 50000 1000
 	# for run in {1..15}; do ./a.out 50000 1000 ; done
 	# for run in {1..15}; do ./a.out 50000 2000 ; done
 	# for run in {1..15}; do ./a.out 50000 3000 ; done
@@ -16,4 +16,4 @@ sta:
 
 specs:
 	@$(NVCC) $(NVCCFLAGS) getSpecs.cu
-#	@sudo ./a.out
+	@sudo ./a.out

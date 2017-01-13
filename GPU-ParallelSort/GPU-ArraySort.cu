@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 using namespace std;
 
 #define numOfArrays 50000
-#define maxElements 4000
+#define maxElements 1000
 // #define numOfArrays 5
 // #define maxElements 20
 #define tempo 2
